@@ -8,6 +8,8 @@ import { Grid, useMediaQuery } from '@material-ui/core';
 const App = () => {
   const md = useMediaQuery((theme) => theme.breakpoints.up('md'));
 
+  console.log('');
+
   return (
     <>
       <Header />
