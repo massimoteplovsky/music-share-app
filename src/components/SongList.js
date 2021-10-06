@@ -1,7 +1,8 @@
 import React from 'react';
 import { CircularProgress, makeStyles } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_SONGS } from '../graphql/queries';
+import { useSubscription, useMutation } from '@apollo/react-hooks';
+import { GET_SONGS } from '../graphql/subscriptions';
+import { ADD_OR_REMOVE_FROM_QUEUE } from '../graphql/mutations';
 
 // Components
 import Song from './Song';
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SongList = () => {
   const cx = useStyles();
-  const { data, loading, error } = useQuery(GET_SONGS);
+  const { data, loading, error } = useSubscription(GET_SONGS);
 
   if (loading) {
     return (
