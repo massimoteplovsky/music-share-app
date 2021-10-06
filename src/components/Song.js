@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useMutation } from '@apollo/react-hooks';
+import { ADD_OR_REMOVE_FROM_QUEUE } from '../graphql/mutations';
 import {
   Card,
   CardMedia,
@@ -8,7 +10,8 @@ import {
   IconButton,
   makeStyles,
 } from '@material-ui/core';
-import { PlayArrow, Save } from '@material-ui/icons';
+import { PlayArrow, Save, Pause } from '@material-ui/icons';
+import { SongContext } from '../context';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -32,7 +35,32 @@ const useStyles = makeStyles((theme) => ({
 
 const Song = ({ songDetails }) => {
   const cx = useStyles();
-  const { title, artist, thumbnail } = songDetails;
+  const { state, dispatch } = useContext(SongContext);
+  const [addOrRemoveFromQueue] = useMutation(ADD_OR_REMOVE_FROM_QUEUE, {
+    onCompleted: (data) => {
+      localStorage.setItem('songs', JSON.stringify(data.addOrRemoveFromQueue));
+    },
+  });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { title, artist, thumbnail, id } = songDetails;
+
+  useEffect(() => {
+    const isPlaying = state.isPlaying && id === state.song.id;
+    setIsPlaying(isPlaying);
+  }, [id, state.song.id, state.isPlaying]);
+
+  const handleTogglePlay = () => {
+    dispatch({ type: 'SET_SONG', payload: songDetails });
+    dispatch({ type: 'TOGGLE_PLAY_SONG' });
+  };
+
+  const handleAddOrRemoveFromQueue = () => {
+    addOrRemoveFromQueue({
+      variables: { input: { ...songDetails, __typename: 'Song' } },
+    });
+  };
+
+  console.log(isPlaying, songDetails.title);
 
   return (
     <Card className={cx.container}>
@@ -48,10 +76,14 @@ const Song = ({ songDetails }) => {
             </Typography>
           </CardContent>
           <CardActions>
-            <IconButton size="small" color="primary">
-              <PlayArrow />
+            <IconButton size="small" color="primary" onClick={handleTogglePlay}>
+              {isPlaying ? <Pause /> : <PlayArrow />}
             </IconButton>
-            <IconButton size="small" color="secondary">
+            <IconButton
+              onClick={handleAddOrRemoveFromQueue}
+              size="small"
+              color="secondary"
+            >
               <Save />
             </IconButton>
           </CardActions>

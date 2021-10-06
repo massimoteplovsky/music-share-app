@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useQuery } from '@apollo/react-hooks';
 import {
   Card,
   CardContent,
@@ -8,7 +9,9 @@ import {
   CardMedia,
   makeStyles,
 } from '@material-ui/core';
-import { SkipPrevious, PlayArrow, SkipNext } from '@material-ui/icons';
+import { SkipPrevious, PlayArrow, SkipNext, Pause } from '@material-ui/icons';
+import { SongContext } from '../context';
+import { GET_QUEUED_SONGS } from '../graphql/queries';
 
 //Components
 import QueueSongList from './QueuedSongList';
@@ -43,24 +46,39 @@ const useStyles = makeStyles((theme) => ({
 
 function SongPlayer() {
   const cx = useStyles();
+  const { state, dispatch } = useContext(SongContext);
+  const {
+    data: { queue },
+  } = useQuery(GET_QUEUED_SONGS);
+
+  const { title, artist, duration, thumbnail } = state.song;
+
+  const handleTogglePlay = () => {
+    dispatch({ type: 'TOGGLE_PLAY_SONG' });
+  };
+
   return (
     <>
       <Card className={cx.container} variant="outlined">
         <div className={cx.details}>
           <CardContent className={cx.content}>
             <Typography variant="h5" component="h3">
-              Title
+              {title}
             </Typography>
             <Typography variant="subtitle1" component="p" color="textSecondary">
-              Artist
+              {artist}
             </Typography>
           </CardContent>
           <div className={cx.controls}>
             <IconButton>
               <SkipPrevious />
             </IconButton>
-            <IconButton>
-              <PlayArrow className={cx.playIcon} />
+            <IconButton onClick={handleTogglePlay}>
+              {state.isPlaying ? (
+                <Pause className={cx.playIcon} />
+              ) : (
+                <PlayArrow className={cx.playIcon} />
+              )}
             </IconButton>
             <IconButton>
               <SkipNext />
@@ -71,12 +89,9 @@ function SongPlayer() {
           </div>
           <Slider min={0} max={1} step={0.01} />
         </div>
-        <CardMedia
-          className={cx.thumbnail}
-          image="https://i.pinimg.com/236x/ef/53/43/ef5343540e4be864d90a33e9e17cc314--james-hetfield-my-favorite-music.jpg?nii=t"
-        />
+        <CardMedia className={cx.thumbnail} image={thumbnail} />
       </Card>
-      <QueueSongList />
+      <QueueSongList queue={queue} />
     </>
   );
 }
