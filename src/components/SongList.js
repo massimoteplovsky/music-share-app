@@ -1,8 +1,7 @@
 import React from 'react';
 import { CircularProgress, makeStyles } from '@material-ui/core';
-import { useSubscription, useMutation } from '@apollo/react-hooks';
+import { useSubscription } from '@apollo/react-hooks';
 import { GET_SONGS } from '../graphql/subscriptions';
-import { ADD_OR_REMOVE_FROM_QUEUE } from '../graphql/mutations';
 
 // Components
 import Song from './Song';

@@ -50,8 +50,12 @@ const Song = ({ songDetails }) => {
   }, [id, state.song.id, state.isPlaying]);
 
   const handleTogglePlay = () => {
+    if (isPlaying) {
+      return dispatch({ type: 'STOP_SONG' });
+    }
+
     dispatch({ type: 'SET_SONG', payload: songDetails });
-    dispatch({ type: 'TOGGLE_PLAY_SONG' });
+    dispatch({ type: 'PLAY_SONG' });
   };
 
   const handleAddOrRemoveFromQueue = () => {
@@ -59,8 +63,6 @@ const Song = ({ songDetails }) => {
       variables: { input: { ...songDetails, __typename: 'Song' } },
     });
   };
-
-  console.log(isPlaying, songDetails.title);
 
   return (
     <Card className={cx.container}>

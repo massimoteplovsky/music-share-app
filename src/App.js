@@ -15,7 +15,6 @@ const App = () => {
   return (
     <SongContext.Provider value={{ state, dispatch }}>
       <Header />
-
       <Grid container spacing={3}>
         <Grid
           style={{

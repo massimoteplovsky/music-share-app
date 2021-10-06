@@ -1,7 +1,9 @@
 export const songReducer = (state, { type, payload = null }) => {
   switch (type) {
-    case 'TOGGLE_PLAY_SONG':
-      return { ...state, isPlaying: !state.isPlaying };
+    case 'PLAY_SONG':
+      return { ...state, isPlaying: true };
+    case 'STOP_SONG':
+      return { ...state, isPlaying: false };
     case 'SET_SONG':
       return { ...state, song: payload };
     default:
